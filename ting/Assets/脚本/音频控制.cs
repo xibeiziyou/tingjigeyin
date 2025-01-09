@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 public class 音频控制 : MonoBehaviour
 {
-    List<List<AudioSource>> 音组 = new();
+    private readonly List<List<AudioSource>> 音组 = new();
     public List<AudioSource> List;
     public List<AudioSource> C大调;
     public List<AudioSource> D大调;
@@ -14,10 +16,12 @@ public class 音频控制 : MonoBehaviour
     private int 范围 = 36;
     private bool 锁 = false;
     List<AudioSource> 当前音组;
+    List<AudioSource> 重播音组 = new();
     float 间隔时间 = 1f;
     public TMP_Dropdown dropdown音数;  // 引用 TMP_Dropdown 组件
     public TMP_Dropdown dropdown音调;
     public Slider Slider;
+    public TMP_Text 音名;
 
     void Start()
     {
@@ -52,6 +56,8 @@ public class 音频控制 : MonoBehaviour
     public void 随机几个音()
     {
         if(锁)return;
+        音名.text = null;
+        重播音组.Clear();
         StartCoroutine(播放随机音效(音数));  // 启动协程来控制音效播放
     }
 
@@ -66,6 +72,12 @@ public class 音频控制 : MonoBehaviour
         }
         锁 = false;
     }
+    public void 播音(int 音调,List<AudioSource> 音组)
+    {
+        音组[音调].Play();
+        音名.text += 音组[音调].name + "  ";
+        重播音组.Add(音组[音调]);
+    }
     public void 音检()
     {
         if (锁) return;
@@ -77,19 +89,30 @@ public class 音频控制 : MonoBehaviour
         锁 = true;
         foreach (var item in 当前音组)
         {
-            if (!item.isPlaying)
-            {
-                item.Play();  // 播放当前音源
-            }
-
+            item.Play();  // 播放当前音源
             yield return new WaitForSeconds(间隔时间); // 延迟指定时间后再播放下一个音源
         }
         锁 = false;
     }
-    public void 播音(int 音调,List<AudioSource> 音组)
+    public void 重播()
     {
-        //print(音调);
-        if (!音组[音调].isPlaying) 音组[音调].Play();
+        if (锁) return;
+        StartCoroutine(重());
+    }
+    private IEnumerator 重()
+    {
+        锁 = true;
+        foreach (var item in 重播音组)
+        {
+            item.Play();
+            yield return new WaitForSeconds(间隔时间);
+        }
+        锁 = false;
+    }
+
+    public void 音名显现()
+    {
+        音名.enabled = !音名.enabled;
     }
 
 }
