@@ -12,6 +12,7 @@ public class 音频控制 : MonoBehaviour
     public List<AudioSource> D大调;
     public int 音数;
     private int 范围 = 36;
+    private bool 锁 = false;
     List<AudioSource> 当前音组;
     float 间隔时间 = 1f;
     public TMP_Dropdown dropdown音数;  // 引用 TMP_Dropdown 组件
@@ -50,25 +51,30 @@ public class 音频控制 : MonoBehaviour
     }
     public void 随机几个音()
     {
+        if(锁)return;
         StartCoroutine(播放随机音效(音数));  // 启动协程来控制音效播放
     }
 
     // 协程来逐个播放音效并在之间加上1秒延时
     private IEnumerator 播放随机音效(int 音数)
     {
+        锁 = true;
         for (int i = 0; i < 音数; i++)
         {
             播音(UnityEngine.Random.Range(0, 范围), 当前音组); // 播放随机音效
             yield return new WaitForSeconds(间隔时间); // 等待1秒
         }
+        锁 = false;
     }
     public void 音检()
     {
+        if (锁) return;
         StartCoroutine(依次播放());
     }
 
     private IEnumerator 依次播放()
     {
+        锁 = true;
         foreach (var item in 当前音组)
         {
             if (!item.isPlaying)
@@ -78,6 +84,7 @@ public class 音频控制 : MonoBehaviour
 
             yield return new WaitForSeconds(间隔时间); // 延迟指定时间后再播放下一个音源
         }
+        锁 = false;
     }
     public void 播音(int 音调,List<AudioSource> 音组)
     {
