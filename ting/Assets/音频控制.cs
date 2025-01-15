@@ -1,10 +1,8 @@
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
-using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
 
 public class 音频控制 : MonoBehaviour
 {
@@ -12,6 +10,11 @@ public class 音频控制 : MonoBehaviour
     public List<AudioSource> List;
     public List<AudioSource> C大调;
     public List<AudioSource> D大调;
+    public List <AudioSource> E大调;
+    public List<AudioSource> F大调;
+    public List<AudioSource> G大调;
+    public List<AudioSource> A大调;
+    public List<AudioSource> B大调;
     public int 音数;
     private int 范围 = 36;
     private bool 锁 = false;
@@ -29,6 +32,11 @@ public class 音频控制 : MonoBehaviour
         音组.Add(List);
         音组.Add(C大调);
         音组.Add(D大调);
+        音组.Add(E大调);
+        音组.Add(F大调);
+        音组.Add(G大调);
+        音组.Add(A大调);
+        音组.Add(B大调);
 
         // 监听 TMP_Dropdown 的值改变事件
         dropdown音数.onValueChanged.AddListener(音数更改);
@@ -55,7 +63,7 @@ public class 音频控制 : MonoBehaviour
     }
     public void 随机几个音()
     {
-        if(锁)return;
+        if (锁) return;
         音名.text = null;
         重播音组.Clear();
         StartCoroutine(播放随机音效(音数));  // 启动协程来控制音效播放
@@ -72,7 +80,7 @@ public class 音频控制 : MonoBehaviour
         }
         锁 = false;
     }
-    public void 播音(int 音调,List<AudioSource> 音组)
+    public void 播音(int 音调, List<AudioSource> 音组)
     {
         音组[音调].Play();
         音名.text += 音组[音调].name + "  ";
@@ -114,5 +122,4 @@ public class 音频控制 : MonoBehaviour
     {
         音名.enabled = !音名.enabled;
     }
-
 }
